@@ -1,11 +1,9 @@
 import struct
 
 STRUCTS = {
-
-    "Message": {"fields": [{"name": "id", "type": "int"}, {"name": "text", "type": "string"}, {"element_type": "string", "name": "tags", "type": "list"}, {"name": "metadata", "type": "Metadata"}], "name": "Message"},
-
-    "Metadata": {"fields": [{"name": "count", "type": "int"}, {"name": "label", "type": "string"}], "name": "Metadata"},
-
+{% for struct in structs %}
+    {{ struct.name | tojson }}: {{ struct | tojson }},
+{% endfor %}
 }
 
 
@@ -109,21 +107,13 @@ def deserialize_struct(data, offset, struct_name, structs):
     return obj, offset
 
 
+{% for struct in structs %}
+def serialize_{{ struct.name | lower }}(obj):
+    return serialize_struct(obj, {{ struct.name | tojson }}, STRUCTS)
 
-def serialize_message(obj):
-    return serialize_struct(obj, "Message", STRUCTS)
 
-
-def deserialize_message(data):
-    obj, _ = deserialize_struct(data, 0, "Message", STRUCTS)
+def deserialize_{{ struct.name | lower }}(data):
+    obj, _ = deserialize_struct(data, 0, {{ struct.name | tojson }}, STRUCTS)
     return obj
 
-
-def serialize_metadata(obj):
-    return serialize_struct(obj, "Metadata", STRUCTS)
-
-
-def deserialize_metadata(data):
-    obj, _ = deserialize_struct(data, 0, "Metadata", STRUCTS)
-    return obj
-
+{% endfor %}

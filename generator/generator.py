@@ -1,29 +1,30 @@
-import os
 import json
+from pathlib import Path
+
 from jinja2 import Environment, FileSystemLoader
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+BASE_DIR = Path(__file__).resolve().parent
+INTERFACE_PATH = BASE_DIR.parent / "interface.json"
+OUTPUT_PATH = BASE_DIR.parent / "generated" / "protocol.py"
+TEMPLATE_DIR = BASE_DIR / "templates"
 
-# create output folder if not exists
-os.makedirs(os.path.join(BASE_DIR, "..", "generated"), exist_ok=True)
 
-with open(os.path.join(BASE_DIR, "..", "interface.json")) as f:
-    spec = json.load(f)
+def generate_protocol_code(spec):
+    structs = spec.get("structs", [])
+    env = Environment(loader=FileSystemLoader(TEMPLATE_DIR), autoescape=False)
+    template = env.get_template("protocol.j2")
+    return template.render(structs=structs)
 
-env = Environment(loader=FileSystemLoader(os.path.join(BASE_DIR, "templates")))
 
-serializer_tpl = env.get_template("serializer.j2")
-deserializer_tpl = env.get_template("deserializer.j2")
+def main():
+    OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
+    with INTERFACE_PATH.open(encoding="utf-8") as f:
+        spec = json.load(f)
 
-output = ""
+    output = generate_protocol_code(spec)
+    OUTPUT_PATH.write_text(output, encoding="utf-8")
+    print(f"Generated {OUTPUT_PATH.name}")
 
-for struct in spec["structs"]:
-    output += serializer_tpl.render(struct=struct)
-    output += "\n\n"
-    output += deserializer_tpl.render(struct=struct)
-    output += "\n\n"
 
-with open(os.path.join(BASE_DIR, "..", "generated", "protocol.py"), "w") as f:
-    f.write(output)
-
-print("Generated protocol.py")
+if __name__ == "__main__":
+    main()

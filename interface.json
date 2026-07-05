@@ -4,7 +4,16 @@
       "name": "Message",
       "fields": [
         {"name": "id", "type": "int"},
-        {"name": "text", "type": "string"}
+        {"name": "text", "type": "string"},
+        {"name": "tags", "type": "list", "element_type": "string"},
+        {"name": "metadata", "type": "Metadata"}
+      ]
+    },
+    {
+      "name": "Metadata",
+      "fields": [
+        {"name": "count", "type": "int"},
+        {"name": "label", "type": "string"}
       ]
     }
   ]
