@@ -1,26 +1,27 @@
 {
+  "protocol": "TCP",
   "services": [
     {
       "name": "ServiceA",
+      "role": "server",
       "host": "127.0.0.1",
-      "port": 9000,
+      "listen_port": 9000,
       "endpoints": [
         {
           "name": "receiveMessage",
-          "input": "Message",
-          "output": "Ack"
+          "input": "Message"
         }
       ]
     },
     {
       "name": "ServiceB",
+      "role": "client",
       "host": "127.0.0.1",
-      "port": 9001,
+      "target_port": 9000,
       "endpoints": [
         {
           "name": "sendMessage",
-          "input": "Message",
-          "output": "Ack"
+          "input": "Message"
         }
       ]
     }
@@ -29,10 +30,6 @@
     "Message": {
       "id": "int",
       "text": "string"
-    },
-    "Ack": {
-      "status": "string"
     }
-  },
-  "protocol": "TCP"
+  }
 }

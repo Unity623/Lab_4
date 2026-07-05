@@ -1,31 +1,72 @@
-# Lab_4
+# Lab 4
 
-# TCP Serialization Generator
+## TCP Serialization Generator
 
-## Opis projektu
+This project demonstrates a simple code-generation workflow for binary TCP communication.
+It reads a protocol definition from JSON, generates Python serialization/deserialization functions with Jinja2, and uses them in a minimal client-server example.
 
-Projekt implementuje generator kodu serializacji i deserializacji danych na podstawie definicji zapisanej w JSON (`interface.json`). Na jego podstawie generowany jest kod Pythona, który umożliwia binarną komunikację między dwoma serwisami przez TCP/IP.
+## Project structure
 
-System składa się z:
-- generatora kodu (Python + Jinja2)
-- dwóch serwisów komunikujących się przez TCP:
-  - ServiceA (serwer)
-  - ServiceB (klient)
+- [interface.json](interface.json) - protocol definition
+- [generator/generator.py](generator/generator.py) - code generator entry point
+- [generator/templates/serializer.j2](generator/templates/serializer.j2) - serializer template
+- [generator/templates/deserializer.j2](generator/templates/deserializer.j2) - deserializer template
+- [generated/protocol.py](generated/protocol.py) - generated protocol code
+- [service_a/server.py](service_a/server.py) - TCP server
+- [service_b/client.py](service_b/client.py) - TCP client
+- [requirements.txt](requirements.txt) - Python dependencies
 
-## Architektura
+## How it works
 
-ServiceB wysyła wiadomość do ServiceA przez TCP/IP.
+1. The protocol is described in [interface.json](interface.json).
+2. The generator reads that file and renders Python code using Jinja2 templates.
+3. The generated code is saved to [generated/protocol.py](generated/protocol.py).
+4. The server receives a binary message and deserializes it.
+5. The client serializes a message and sends it over TCP.
 
-ServiceA odbiera dane binarne i deserializuje je do obiektu Pythona.
+## Requirements
 
-## Definicja protokołu
+Install dependencies:
 
-Definicja struktur danych znajduje się w pliku:
+```powershell
+pip install -r requirements.txt
+```
 
-interface.json
+## Generate the protocol code
 
-Przykład:
+Run:
 
+```powershell
+python generator\generator.py
+```
+
+If your system uses `py` instead of `python`, use:
+
+```powershell
+py generator\generator.py
+```
+
+## Run the example
+
+Start the server in one terminal:
+
+```powershell
+python service_a\server.py
+```
+
+In another terminal, run the client:
+
+```powershell
+python service_b\client.py
+```
+
+The server listens on `127.0.0.1:9000`.
+
+## Example protocol
+
+The current interface defines a single message structure:
+
+```json
 {
   "structs": [
     {
@@ -37,63 +78,9 @@ Przykład:
     }
   ]
 }
+```
 
-## Generator kodu
+## Notes
 
-Generator:
-- czyta plik interface.json
-- generuje funkcje serializacji i deserializacji
-- wykorzystuje szablony Jinja2
-
-Uruchomienie generatora:
-
-python generator/generator.py
-
-Wynik generacji:
-
-generated/protocol.py
-
-## Uruchomienie projektu
-
-### Instalacja zależności
-
-pip install jinja2
-
-### Generowanie kodu
-
-python generator/generator.py
-
-### Uruchomienie serwera (ServiceA)
-
-python service_a/server.py
-
-Serwer działa na:
-127.0.0.1:9000
-
-### Uruchomienie klienta (ServiceB)
-
-python service_b/client.py
-
-## Przebieg komunikacji
-
-1. ServiceA uruchamia serwer TCP i czeka na połączenie
-2. ServiceB łączy się z ServiceA
-3. ServiceB serializuje obiekt Message do formatu binarnego
-4. Dane są wysyłane przez TCP/IP
-5. ServiceA deserializuje dane i wypisuje wynik
-
-## Technologie
-
-- Python
-- TCP/IP (socket)
-- JSON (definicja protokołu)
-- Jinja2 (generator kodu)
-- serializacja binarna
-
-## Cel projektu
-
-Celem projektu jest pokazanie:
-- generowania kodu na podstawie specyfikacji JSON
-- implementacji prostego protokołu komunikacyjnego
-- komunikacji między dwoma serwisami przez TCP/IP
-- serializacji i deserializacji danych binarnych
+- The generated module contains functions such as `serialize_message` and `deserialize_message`.
+- The example uses a very simple binary format with 4-byte integers and length-prefixed strings.
