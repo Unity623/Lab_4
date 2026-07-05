@@ -1,0 +1,38 @@
+{
+  "services": [
+    {
+      "name": "ServiceA",
+      "host": "127.0.0.1",
+      "port": 9000,
+      "endpoints": [
+        {
+          "name": "receiveMessage",
+          "input": "Message",
+          "output": "Ack"
+        }
+      ]
+    },
+    {
+      "name": "ServiceB",
+      "host": "127.0.0.1",
+      "port": 9001,
+      "endpoints": [
+        {
+          "name": "sendMessage",
+          "input": "Message",
+          "output": "Ack"
+        }
+      ]
+    }
+  ],
+  "messages": {
+    "Message": {
+      "id": "int",
+      "text": "string"
+    },
+    "Ack": {
+      "status": "string"
+    }
+  },
+  "protocol": "TCP"
+}
