@@ -1,0 +1,18 @@
+def deserialize_{{ struct.name.lower() }}(data):
+    obj = {}
+    offset = 0
+
+    {% for field in struct.fields %}
+    {% if field.type == "int" %}
+    obj["{{ field.name }}"] = int.from_bytes(data[offset:offset+4], 'big')
+    offset += 4
+
+    {% elif field.type == "string" %}
+    length = int.from_bytes(data[offset:offset+4], 'big')
+    offset += 4
+    obj["{{ field.name }}"] = data[offset:offset+length].decode()
+    offset += length
+    {% endif %}
+    {% endfor %}
+
+    return obj

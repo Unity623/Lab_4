@@ -1,0 +1,14 @@
+def serialize_{{ struct.name.lower() }}(obj):
+    data = bytearray()
+
+    {% for field in struct.fields %}
+    {% if field.type == "int" %}
+    data += obj["{{ field.name }}"].to_bytes(4, 'big')
+    {% elif field.type == "string" %}
+    encoded = obj["{{ field.name }}"].encode()
+    data += len(encoded).to_bytes(4, 'big')
+    data += encoded
+    {% endif %}
+    {% endfor %}
+
+    return data
