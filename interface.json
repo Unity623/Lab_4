@@ -1,0 +1,11 @@
+{
+  "structs": [
+    {
+      "name": "Message",
+      "fields": [
+        {"name": "id", "type": "int"},
+        {"name": "text", "type": "string"}
+      ]
+    }
+  ]
+}
